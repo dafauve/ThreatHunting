@@ -1,3 +1,9 @@
+// TTP documented here: https://www.ired.team/offensive-security/persistence/rid-hijacking
+//
+//
+//
+//
+//
 //replace domain by your internal Netbios domain name. Example: Contoso
 //interval_susp: period to check back in time for baseline of suspect SIDs
 //interval_tot: period to check back in time for potential RID hijacking
