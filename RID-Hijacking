@@ -1,0 +1,19 @@
+//replace domain by your internal Netbios domain name. Example: Contoso
+//interval_susp: period to check back in time for baseline of suspect SIDs
+//interval_tot: period to check back in time for potential RID hijacking
+let domain="contoso";
+let interval_tot=10d;
+let interval_susp=5d;
+let SuspectSID= DeviceLogonEvents
+| where Timestamp > ago(interval_susp)
+| where isnotempty(AccountSid)
+| where AccountDomain != domain
+| summarize by DeviceId,AccountName,AccountSid
+| summarize SIDCount=dcount(AccountSid),SIDs=make_set(AccountSid) by AccountName,DeviceId
+| where SIDCount > 1 and SIDs contains "-500";
+DeviceLogonEvents
+| where Timestamp > ago(interval_tot)
+| where isnotempty(AccountSid)
+| where AccountDomain != domain
+| where AccountSid endswith "-500"
+| join kind=leftsemi SuspectSID on AccountName,DeviceId
